@@ -581,9 +581,13 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 			case VALUE:
 				print(((log_level_t)(log_debug+5)), "DEBUG VALUE byte= %c hex= %x ",name().c_str(), byte, byte);
 
-				if( skippingFirstValue && byte != '(' ) {
+				if( skippingFirstValue ) {
+					// reached next value
+					if( byte == '(' ) 
+						skippingFirstValue = false;
 					break;
 				}
+
 
 				if ((byte == '*') || (byte == ')')) {
 					value[byte_iterator] = '\0';
