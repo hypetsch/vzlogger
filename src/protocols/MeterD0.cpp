@@ -341,6 +341,7 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 	time_t start_time, end_time;
 	struct termios tio;
 	int baudrate_connect,baudrate_read;	// Baudrates for switching
+	bool skippingFirstValue = false;
 
 	dump_file(CTRL, "read");
 
@@ -563,6 +564,9 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 						obis_code[byte_iterator] = '\0';
 						byte_iterator = 0;
 						context = VALUE;
+
+						// skip first value and read second
+						skippingFirstValue = std::string(obis_code) == "1.4.0" || std::string(obis_code) == "2.4.0";
 					}
 					else {
 						if (byte_iterator < OBIS_LEN)
@@ -576,6 +580,11 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 
 			case VALUE:
 				print(((log_level_t)(log_debug+5)), "DEBUG VALUE byte= %c hex= %x ",name().c_str(), byte, byte);
+
+				if( skippingFirstValue && byte != '(' ) {
+					break;
+				}
+
 				if ((byte == '*') || (byte == ')')) {
 					value[byte_iterator] = '\0';
 					byte_iterator = 0;
