@@ -599,9 +599,9 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 						std::string v(value);
 						if( std::string(obis_code) == "0.9.1" && v.length() == 8 ) {
 							// format hh:mm:ss
-							int hour = std::atoi(v.substr(0,2));
-							int min = std::atoi(v.substr(3,2));
-							int sec = std::atoi(v.substr(7,2));
+							int hour = std::stoi(v.substr(0,2));
+							int min = std::stoi(v.substr(3,2));
+							int sec = std::stoi(v.substr(7,2));
 
 							sec = hour * 3600 + min * 60 + sec;
 							v = std::to_string(sec);
