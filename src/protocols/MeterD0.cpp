@@ -604,9 +604,7 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 							int sec = std::stoi(v.substr(6,2));
 
 							sec = hour * 3600 + min * 60 + sec;
-							v = std::to_string(sec);
-							memcpy(&value, v.c_str(), v.length() );
-							value[v.length()] = '\0';
+							std::itoa(sec, value, 10);
 						}
 
 						unit[0] = '\0';
