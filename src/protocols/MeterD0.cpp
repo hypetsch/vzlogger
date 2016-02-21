@@ -596,7 +596,7 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 					if (byte == ')') {
 
 						// return time as seconds
-						std::string v(value)
+						std::string v(value);
 						if( std::string(obis_code) == "0.9.1" && v.length() == 8 ) {
 							// format hh:mm:ss
 							int hour = std::atoi(v.substr(0,2));
