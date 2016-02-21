@@ -594,6 +594,21 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 					byte_iterator = 0;
 
 					if (byte == ')') {
+
+						// return time as seconds
+						std::string v(value)
+						if( std::string(obis_code) == "0.9.1" && v.length() == 8 ) {
+							// format hh:mm:ss
+							int hour = std::atoi(v.substr(0,2));
+							int min = std::atoi(v.substr(3,2));
+							int sec = std::atoi(v.substr(7,2));
+
+							sec = hour * 3600 + min * 60 + sec;
+							v = std::to_string(sec);
+							memcpy(&value, v.c_str(), v.length() );
+							value[v.length()] = '\0';
+						}
+
 						unit[0] = '\0';
 						context =  END_LINE;
 					}
@@ -605,8 +620,7 @@ ssize_t MeterD0::read(std::vector<Reading>& rds, size_t max_readings) {
 					if (byte_iterator < VALUE_LEN)
 						value[byte_iterator++] = byte;
 					else
-						print(log_error, "Too much data for value (byte=0x%X)",
-															name().c_str(), byte);
+						print(log_error, "Too much data for value (byte=0x%X)",	name().c_str(), byte);
 				}
 				break;
 
